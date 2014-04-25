@@ -42,14 +42,23 @@ class Predicate:
                 print 'Forall x [' + self.args[0]['lemma'] + '(x) --> ' +  self.args[1]['word'] + '(x)]'
 
         else:
+            num = 1
+            firstbit = []
+            there_exists = []
             if self.attrib['pos'] == 'VBZ':
                 op = [self.name, '(']
                 for x in self.args:
-                    op.append(x['word'])
+                    if(x['pos']=='NNP' or x['pos']=='NNPS'):
+                        op.append(x['word'])
+                    elif(x['pos']=='NN' or x['pos']=='NNS'):
+                        op.append('x'+str(num))
+                        firstbit.append(x['lemma']+'(x'+str(num)+') and ')
+                        there_exists.append(' There_exists x'+str(num))
+                        num = num+1
                     op.append(',')
                 op = op[:-1]
                 op.append(')')
-                print ''.join(op)
+                print ''.join(there_exists), ''.join(firstbit), ''.join(op)
             if self.attrib['pos'] == 'VBP':
                 print 'Forall x [' + self.args[0]['lemma'] + '(x) --> ' +  self.attrib['lemma'] + '(x, ' + self.args[1]['word'] + ')]'
 
