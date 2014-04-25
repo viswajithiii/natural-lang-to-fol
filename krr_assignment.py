@@ -71,12 +71,10 @@ def stripSqBkts(root):
 
 def postorder(root):
     retval = []
-    string = ''
     if root != None:
         for child in root:
             retval.append(postorder(child))
         if(root.tag=='lf'):
-            string = root.attrib['word']
             lmb_exp = Predicate(root.attrib)
         elif(len(retval)==2):
             if(len(retval[0].lmbd)==0):
