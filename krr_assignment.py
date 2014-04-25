@@ -10,7 +10,7 @@ MODELS_LOC = '/run/media/sriram/8163f884-43b4-46a5-b61d-3a274dcd690a/sriram/Down
 
 class Predicate:
     def __init__ (self, cat, name):
-        if(cat=='(S[dcl]\NP)/NP'):
+        if(cat=='(S\NP)/NP'):
             self.lmbd = [1,0]
             self.name = name
             self.args = [None,None]
@@ -31,6 +31,24 @@ class Predicate:
         op = op[:-1]
         op.append(')')
         print ''.join(op)
+
+
+def stripSqBkts(root):
+    cat = []
+    skip = False
+    if root != None:
+        for child in root:
+            child = stripSqBkts(child)
+        for c in root.attrib['cat']:
+            if(c=='['):
+                skip = True
+            elif(c==']'):
+                skip = False
+                continue
+            if(skip==False):
+                cat.append(c)
+        root.attrib['cat'] = ''.join(cat)
+    return root
 
 
 def postorder(root):
@@ -59,6 +77,7 @@ def main(argv):
     p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     output = p.communicate(sys.stdin.readline())[0]
     root = ET.fromstring(output)[0][0]
+    root = stripSqBkts(root)
     final = postorder(root)
     final.prettyPrint()
 
