@@ -15,6 +15,15 @@ class Predicate:
         if(attrib['cat']=='(S\NP)/NP'):
             self.lmbd = [1,0]
             self.args = [None,None]
+        elif(attrib['cat']=='S\NP'):
+            self.lmbd = [0]
+            self.args = [None]
+        elif(attrib['cat']=='NP'):
+            self.lmbd = []
+            self.args = []
+        elif(attrib['cat']=='S/NP'):
+            self.lmbd = [0]
+            self.args = [None]
         else:
             self.lmbd = []
             self.args = []
