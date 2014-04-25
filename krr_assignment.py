@@ -10,6 +10,7 @@ MODELS_LOC = '/run/media/sriram/8163f884-43b4-46a5-b61d-3a274dcd690a/sriram/Down
 
 class Predicate:
     def __init__ (self, attrib):
+        self.attrib = attrib
         self.name = attrib['word']
         self.lemma = attrib['lemma']
         if(attrib['cat']=='(S\NP)/NP'):
