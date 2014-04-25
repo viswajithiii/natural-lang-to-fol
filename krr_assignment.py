@@ -9,14 +9,14 @@ MODELS_LOC = '/run/media/sriram/8163f884-43b4-46a5-b61d-3a274dcd690a/sriram/Down
 
 
 class Predicate:
-    def __init__ (self, cat, name):
-        if(cat=='(S\NP)/NP'):
+    def __init__ (self, attrib):
+        self.name = attrib['word']
+        self.lemma = attrib['lemma']
+        if(attrib['cat']=='(S\NP)/NP'):
             self.lmbd = [1,0]
-            self.name = name
             self.args = [None,None]
         else:
             self.lmbd = []
-            self.name = name
             self.args = []
 
     def combine(self, other):
@@ -59,14 +59,17 @@ def postorder(root):
             retval.append(postorder(child))
         if(root.tag=='lf'):
             string = root.attrib['word']
-            lmb_exp = Predicate(root.attrib['cat'],string)
+            lmb_exp = Predicate(root.attrib)
         elif(len(retval)==2):
             if(len(retval[0].lmbd)==0):
                 retval[1].combine(retval[0])
                 lmb_exp = retval[1]
             elif(len(retval[1].lmbd)==0):
-                retval[0].combine(retval[1])
-                lmb_exp = retval[0]
+                if(retval[1].lemma=='JJ'):
+                    lmb_exp = retval[1]
+                else:
+                    retval[0].combine(retval[1])
+                    lmb_exp = retval[0]
         else:
             lmb_exp = retval[0]
     return lmb_exp
