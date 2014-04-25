@@ -4,8 +4,8 @@ import sys
 
 
 # Global vars
-CANDC_LOC = '/run/media/sriram/8163f884-43b4-46a5-b61d-3a274dcd690a/sriram/Downloads/candc-1.00/bin/candc'
-MODELS_LOC = '/run/media/sriram/8163f884-43b4-46a5-b61d-3a274dcd690a/sriram/Downloads/models'
+CANDC_LOC = '/home/viswa/Downloads/candc-1.00/bin/candc'
+MODELS_LOC = '/home/viswa/Downloads/models'
 
 
 class Predicate:
@@ -45,7 +45,7 @@ class Predicate:
             num = 1
             firstbit = []
             there_exists = []
-            if self.attrib['pos'] == 'VBZ':
+            if self.args[0]['pos'] == 'NN' or self.args[0]['pos'] == 'NNP':
                 op = [self.name, '(']
                 for x in self.args:
                     if(x['pos']=='NNP' or x['pos']=='NNPS'):
@@ -59,7 +59,7 @@ class Predicate:
                 op = op[:-1]
                 op.append(')')
                 print ''.join(there_exists), ''.join(firstbit), ''.join(op)
-            if self.attrib['pos'] == 'VBP':
+            if self.args[0]['pos'] == 'NNS' or self.args[0]['pos'] == 'NNPS':
                 print 'Forall x [' + self.args[0]['lemma'] + '(x) --> ' +  self.attrib['lemma'] + '(x, ' + self.args[1]['word'] + ')]'
 
 
