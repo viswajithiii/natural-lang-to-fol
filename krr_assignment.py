@@ -4,8 +4,8 @@ import sys
 
 
 # Global vars
-CANDC_LOC = '/run/media/sriram/8163f884-43b4-46a5-b61d-3a274dcd690a/sriram/Downloads/candc-1.00/bin/candc'
-MODELS_LOC = '/run/media/sriram/8163f884-43b4-46a5-b61d-3a274dcd690a/sriram/Downloads/models'
+CANDC_LOC = '/home/viswa/Downloads/candc-1.00/bin/candc'
+MODELS_LOC = '/home/viswa/Downloads/models'
 
 
 class Predicate:
@@ -30,17 +30,25 @@ class Predicate:
             self.args = []
 
     def combine(self, other):
-        self.args[self.lmbd[0]] = other.name
+        self.args[self.lmbd[0]] = other.attrib
         self.lmbd = self.lmbd[1:]
 
     def prettyPrint(self):
-        op = [self.name, '(']
-        for x in self.args:
-            op.append(x)
-            op.append(',')
-        op = op[:-1]
-        op.append(')')
-        print ''.join(op)
+        
+        if self.attrib['lemma'] == 'be':
+            if self.attrib['word'] == 'is':
+                print self.args[1]['word'] + '(' + self.args[0]['word'] + ')'
+            if self.attrib['word'] == 'are':
+                print 'Forall x [' + self.args[0]['lemma'] + '(x) --> ' +  self.args[1]['word'] + '(x)]'
+
+        else:
+            op = [self.name, '(']
+            for x in self.args:
+                op.append(x['word'])
+                op.append(',')
+            op = op[:-1]
+            op.append(')')
+            print ''.join(op)
 
 
 def stripSqBkts(root):
