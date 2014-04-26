@@ -30,35 +30,79 @@ class Predicate:
             self.args = []
 
     def combine(self, other):
+
         self.args[self.lmbd[0]] = other.attrib
         self.lmbd = self.lmbd[1:]
 
+    def printunary (self):
+        """Prints unary predicates, which are specified using a form of the word be."""
+        if self.attrib['word'] == 'is':
+            print self.args[1]['word'] + '(' + self.args[0]['word'] + ')'
+        if self.attrib['word'] == 'are':
+            print 'Forall x [' + self.args[0]['lemma'] + '(x) --> ' +  self.args[1]['word'] + '(x)]'
+
+
+    def printsingularsubject(self):
+        """Prints binary predicates with a singular subject."""
+
+        if not len(self.args) == 2:
+            print 'printsingularsubject error: Not a binary predicate'
+            return
+
+        #Index for quantifiers
+        quant_index = 1
+        quantifier = []
+        firstbit = []
+
+
+        op = [self.name, '(']
+
+        #For singular noun objects.
+        if self.args[1]['pos'] == 'NNP' or self.args[1]['pos'] == 'NN':
+
+            for x in self.args:
+                #Proper noun.
+                if x['pos'] == 'NNP':
+                    op.append(x['word'])
+                else: #Common noun.
+                    op.append('x' + str(quant_index))
+                    firstbit.append(x['lemma'] + '(x' + str(quant_index) + ') and ')
+                    quantifier.append('There_exists x' + str(quant_index) + ' ')
+                    quant_index = quant_index + 1
+
+                op.append(',')
+            op = op[:-1] #To remove trailing comma.
+            op.append(')')
+        #For plural noun objects.
+        if self.args[1]['pos'] == 'NNS' or self.args[1]['pos'] == 'NNPS':
+
+            #Proper noun
+            if self.args[0]['pos'] == 'NNP':
+                op.append(self.args[0]['word'])
+            else: #Common noun.
+                op.append('x'+str(quant_index))
+                firstbit.append(x['lemma'] + '(x' + str(quant_index) + ') and')
+                quantifier.append('There_exists x' + str(quant_index)+ ' ')
+                quant_index = quant_index + 1
+            op.append(',')
+
+            quantifier.append('For_all x' + str(quant_index) + ' ')
+            op.append('x' + str(quant_index) + ')')
+            firstbit.append(self.args[1]['lemma']+'(x' + str(quant_index) + ') --> ')
+
+
+        print ''.join(quantifier), ''.join(firstbit), ''.join(op)
+
+
     def prettyPrint(self):
         
+        #To handle Unary Predicates, which are specified using a form of the word be.
         if self.attrib['lemma'] == 'be':
-            if self.attrib['word'] == 'is':
-                print self.args[1]['word'] + '(' + self.args[0]['word'] + ')'
-            if self.attrib['word'] == 'are':
-                print 'Forall x [' + self.args[0]['lemma'] + '(x) --> ' +  self.args[1]['word'] + '(x)]'
-
+            self.printunary()
         else:
-            num = 1
-            firstbit = []
-            there_exists = []
+
             if self.args[0]['pos'] == 'NN' or self.args[0]['pos'] == 'NNP':
-                op = [self.name, '(']
-                for x in self.args:
-                    if(x['pos']=='NNP' or x['pos']=='NNPS'):
-                        op.append(x['word'])
-                    elif(x['pos']=='NN' or x['pos']=='NNS'):
-                        op.append('x'+str(num))
-                        firstbit.append(x['lemma']+'(x'+str(num)+') and ')
-                        there_exists.append(' There_exists x'+str(num))
-                        num = num+1
-                    op.append(',')
-                op = op[:-1]
-                op.append(')')
-                print ''.join(there_exists), ''.join(firstbit), ''.join(op)
+                self.printsingularsubject()
             if self.args[0]['pos'] == 'NNS' or self.args[0]['pos'] == 'NNPS':
                 print 'Forall x [' + self.args[0]['lemma'] + '(x) --> ' +  self.attrib['lemma'] + '(x, ' + self.args[1]['word'] + ')]'
 
