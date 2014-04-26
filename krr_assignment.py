@@ -93,6 +93,20 @@ class Predicate:
 
         print ''.join(quantifier), ''.join(firstbit), ''.join(op)
 
+    def printpluralsubject(self):
+
+
+        #For singular proper noun object.
+        if self.args[1]['pos'] == 'NNP':
+            print 'For_all x [' + self.args[0]['lemma'] + '(x) --> ' +  self.attrib['word'] + '(x, ' + self.args[1]['word'] + ')]'
+
+        #For singular common noun object.
+        if self.args[1]['pos'] == 'NN' or self.args[1]['pos'] == 'JJ':
+            print 'There_exists x1 ' + self.args[1]['word'] + '(x1) and For_all x2 ' + self.args[0]['lemma'] + '(x2) --> ' + self.attrib['word'] + '(x2, x1)'
+        #For plural noun objects.
+        if self.args[1]['pos'] == 'NNS' or self.args[1]['pos'] == 'NNPS':
+            print 'For_all x1 For_all x2 ' + self.args[0]['lemma'] + '(x1) and ' + self.args[1]['lemma'] + '(x2) --> ' + self.attrib['word'] + '(x1, x2)'
+
 
     def prettyPrint(self):
         
@@ -104,7 +118,7 @@ class Predicate:
             if self.args[0]['pos'] == 'NN' or self.args[0]['pos'] == 'NNP':
                 self.printsingularsubject()
             if self.args[0]['pos'] == 'NNS' or self.args[0]['pos'] == 'NNPS':
-                print 'Forall x [' + self.args[0]['lemma'] + '(x) --> ' +  self.attrib['lemma'] + '(x, ' + self.args[1]['word'] + ')]'
+                self.printpluralsubject()
 
 
 
