@@ -39,10 +39,11 @@ class Predicate:
         self.lmbd = self.lmbd[1:]
         if(self.attrib['cat']=='conj' and len(self.lmbd)==0):
             self.name = self.args[0]['word'] + ' ' + self.name + ' ' + self.args[1]['word']
-            self.attrib['cat'] = 'NP'
+            self.attrib['cat'] = 'conj'
             self.attrib['word'] = self.name
             self.attrib['lemma'] = self.name
             self.attrib['pos'] = 'NN'
+            self.attrib['args'] = self.args
 
     def printunary (self):
         """Prints unary predicates, which are specified using a form of the word be."""
@@ -65,6 +66,7 @@ class Predicate:
 
 
         op = [self.name, '(']
+        op2 = [self.name, '(']
 
         #For singular noun objects.
         if self.args[1]['pos'] == 'NNP' or self.args[1]['pos'] == 'NN':
@@ -73,15 +75,34 @@ class Predicate:
                 #Proper noun.
                 if x['pos'] == 'NNP':
                     op.append(x['word'])
+                    op2.append(x['word'])
                 else: #Common noun.
-                    op.append('x' + str(quant_index))
-                    firstbit.append(x['lemma'] + '(x' + str(quant_index) + ') and ')
-                    quantifier.append('There_exists x' + str(quant_index) + ' ')
-                    quant_index = quant_index + 1
+                    if(x['cat']=='conj'):
+                        op.append('x' + str(quant_index))
+                        firstbit.append(x['args'][0]['lemma'] + '(x' + str(quant_index) + ') and ')
+                        quantifier.append('There_exists x' + str(quant_index) + ' ')
+                        quant_index = quant_index + 1
+
+                        op2.append('x' + str(quant_index))
+                        firstbit.append(x['args'][1]['lemma'] + '(x' + str(quant_index) + ') and ')
+                        quantifier.append('There_exists x' + str(quant_index) + ' ')
+                        quant_index = quant_index + 1
+                    else:
+                        op.append('x' + str(quant_index))
+                        op2.append('x' + str(quant_index))
+                        firstbit.append(x['lemma'] + '(x' + str(quant_index) + ') and ')
+                        quantifier.append('There_exists x' + str(quant_index) + ' ')
+                        quant_index = quant_index + 1
 
                 op.append(',')
+                op2.append(',')
             op = op[:-1] #To remove trailing comma.
+            op2 = op2[:-1] #To remove trailing comma.
             op.append(')')
+            op2.append(')')
+            for x in self.args:
+                if(x['cat']=='conj'):
+                    op = [''.join(op) + ' ' + x['lemma'].split()[1] + ' ' + ''.join(op2)]
         #For plural noun objects.
         if self.args[1]['pos'] == 'NNS' or self.args[1]['pos'] == 'NNPS':
 
