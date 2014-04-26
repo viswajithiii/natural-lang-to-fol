@@ -26,6 +26,9 @@ class Predicate:
         elif(attrib['cat']=='S/NP'):
             self.lmbd = [0]
             self.args = [None]
+        elif(attrib['cat']=='conj'):
+            self.lmbd = [1,0]
+            self.args = [None, None]
         else:
             self.lmbd = []
             self.args = []
@@ -34,6 +37,12 @@ class Predicate:
         """Used to combine two child lambda expressions in the parent node"""
         self.args[self.lmbd[0]] = other.attrib
         self.lmbd = self.lmbd[1:]
+        if(self.attrib['cat']=='conj' and len(self.lmbd)==0):
+            self.name = self.args[0]['word'] + ' ' + self.name + ' ' + self.args[1]['word']
+            self.attrib['cat'] = 'NP'
+            self.attrib['word'] = self.name
+            self.attrib['lemma'] = self.name
+            self.attrib['pos'] = 'NN'
 
     def printunary (self):
         """Prints unary predicates, which are specified using a form of the word be."""
@@ -45,7 +54,6 @@ class Predicate:
 
     def printsingularsubject(self):
         """Prints binary predicates with a singular subject."""
-
         if not len(self.args) == 2:
             print 'printsingularsubject error: Not a binary predicate'
             return
@@ -95,8 +103,7 @@ class Predicate:
         print ''.join(quantifier), ''.join(firstbit), ''.join(op)
 
     def printpluralsubject(self):
-
-
+        """Prints binary predicates with plural subjects."""
         #For singular proper noun object.
         if self.args[1]['pos'] == 'NNP':
             print 'For_all x [' + self.args[0]['lemma'] + '(x) --> ' +  self.attrib['word'] + '(x, ' + self.args[1]['word'] + ')]'
@@ -180,7 +187,7 @@ def main(argv):
     print 'Processing...'
     for ip_line in sentences:
         ip_line = ip_line.split()
-        ip_line = [x for x in ip_line if (x.lower()!='a' and x.lower()!='the' and x.lower()!='all' and x.lower()!='some')]
+        ip_line = [x for x in ip_line if (x.lower()!='a' and x.lower()!='an' and x.lower()!='the' and x.lower()!='all' and x.lower()!='some')]
         ip_line  = ' '.join(ip_line)
         ip_line = ip_line+'\n'
 
