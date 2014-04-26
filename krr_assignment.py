@@ -109,15 +109,19 @@ class Predicate:
             #Proper noun
             if self.args[0]['pos'] == 'NNP':
                 op.append(self.args[0]['word'])
+                op2.append(self.args[0]['word'])
             else: #Common noun.
                 op.append('x'+str(quant_index))
+                op2.append('x' + str(quant_index))
                 firstbit.append(self.args[0]['lemma'] + '(x' + str(quant_index) + ') and ')
                 quantifier.append('There_exists x' + str(quant_index)+ ' ')
                 quant_index = quant_index + 1
             op.append(',')
+            op2.append(',')
 
             quantifier.append('For_all x' + str(quant_index) + ' ')
             op.append('x' + str(quant_index) + ')')
+            op2.append('x' + str(quant_index) + ')')
             firstbit.append(self.args[1]['lemma']+'(x' + str(quant_index) + ') --> ')
 
 
@@ -131,7 +135,11 @@ class Predicate:
 
         #For singular common noun object.
         if self.args[1]['pos'] == 'NN' or self.args[1]['pos'] == 'JJ':
-            print 'There_exists x1 ' + self.args[1]['word'] + '(x1) and For_all x2 ' + self.args[0]['lemma'] + '(x2) --> ' + self.attrib['word'] + '(x2, x1)'
+            if(self.args[1]['cat']=='conj'):
+                print 'There_exists x1 ' + self.args[1]['args'][0]['word'] + '(x1) and There_exists x2 ' + self.args[1]['args'][1]['word'] + '(x2) For_all x3 ' + self.args[0]['lemma'] + '(x3) --> '
+                print self.attrib['word'] + '(x3, x1)' + ' ' + self.args[1]['lemma'].split()[1] + ' ' + self.attrib['word'] + '(x3, x2)'
+            else:
+                print 'There_exists x1 ' + self.args[1]['word'] + '(x1) and For_all x2 ' + self.args[0]['lemma'] + '(x2) --> ' + self.attrib['word'] + '(x2, x1)'
         #For plural noun objects.
         if self.args[1]['pos'] == 'NNS' or self.args[1]['pos'] == 'NNPS':
             print 'For_all x1 For_all x2 ' + self.args[0]['lemma'] + '(x1) and ' + self.args[1]['lemma'] + '(x2) --> ' + self.attrib['word'] + '(x1, x2)'
