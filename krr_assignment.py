@@ -136,8 +136,7 @@ class Predicate:
         #For singular common noun object.
         if self.args[1]['pos'] == 'NN' or self.args[1]['pos'] == 'JJ':
             if(self.args[1]['cat']=='conj'):
-                print 'There_exists x1 ' + self.args[1]['args'][0]['word'] + '(x1) and There_exists x2 ' + self.args[1]['args'][1]['word'] + '(x2) For_all x3 ' + self.args[0]['lemma'] + '(x3) --> '
-                print self.attrib['word'] + '(x3, x1)' + ' ' + self.args[1]['lemma'].split()[1] + ' ' + self.attrib['word'] + '(x3, x2)'
+                print 'There_exists x1 ' + self.args[1]['args'][0]['word'] + '(x1) and There_exists x2 ' + self.args[1]['args'][1]['word'] + '(x2) For_all x3 ' + self.args[0]['lemma'] + '(x3) --> ' + self.attrib['word'] + '(x3, x1)' + ' ' + self.args[1]['lemma'].split()[1] + ' ' + self.attrib['word'] + '(x3, x2)'
             else:
                 print 'There_exists x1 ' + self.args[1]['word'] + '(x1) and For_all x2 ' + self.args[0]['lemma'] + '(x2) --> ' + self.attrib['word'] + '(x2, x1)'
         #For plural noun objects.
